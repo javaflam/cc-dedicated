@@ -1,4 +1,7 @@
 terraform {
+  backend "local" {
+    path = "/Users/rvoon/tfstate/terraform.tfstate"
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -11,10 +14,7 @@ terraform {
   }
 }
 
-provider "confluent" {
-  cloud_api_key    = var.confluent_cloud_api_key
-  cloud_api_secret = var.confluent_cloud_api_secret
-}
+provider "confluent" {}
 
 data "confluent_environment" "test" {
   id = "env-vo320"
@@ -258,10 +258,7 @@ resource "confluent_kafka_acl" "cool-producer-write-on-topic" {
   }
 }
 
-provider "aws" {
-  shared_config_files      = ["/home/ec2-user/.aws/config"]
-  shared_credentials_files = ["/home/ec2-user/.aws/credentials"]
-}
+provider "aws" {}
 
 data "aws_vpc" "privatelink" {
   id = var.vpc_id
