@@ -1,9 +1,8 @@
 terraform {
-  required_version = ">= 0.14.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "= 2.32.0"
+      version = "~> 4.0"
     }
     confluent = {
       source  = "confluentinc/confluent"
@@ -17,11 +16,8 @@ provider "confluent" {
   cloud_api_secret = var.confluent_cloud_api_secret
 }
 
-resource "confluent_environment" "test" {
-  display_name = "Test"
-  lifecycle {
-    prevent_destroy = true
-  }
+data "confluent_environment" "test" {
+  id = "env-vo320"
 }
 
 data "confluent_schema_registry_region" "advanced" {
@@ -33,7 +29,7 @@ data "confluent_schema_registry_region" "advanced" {
 resource "confluent_schema_registry_cluster" "advanced" {
   package = data.confluent_schema_registry_region.advanced.package
   environment {
-    id = confluent_environment.test.id
+    id = data.confluent_environment.test.id
   }
   region {
     id = data.confluent_schema_registry_region.advanced.id
@@ -47,7 +43,7 @@ resource "confluent_network" "private-link" {
   connection_types = ["PRIVATELINK"]
   zones            = keys(var.subnets_to_privatelink)
   environment {
-    id = confluent_environment.test.id
+    id = data.confluent_environment.test.id
   }
 }
 
@@ -57,7 +53,7 @@ resource "confluent_private_link_access" "aws" {
     account = var.aws_account_id
   }
   environment {
-    id = confluent_environment.test.id
+    id = data.confluent_environment.test.id
   }
   network {
     id = confluent_network.private-link.id
@@ -65,7 +61,7 @@ resource "confluent_private_link_access" "aws" {
 }
 
 resource "confluent_kafka_cluster" "dedicated" {
-  display_name = "awesome"
+  display_name = "Novigrad"
   availability = "MULTI_ZONE"
   cloud        = confluent_network.private-link.cloud
   region       = confluent_network.private-link.region
@@ -73,7 +69,7 @@ resource "confluent_kafka_cluster" "dedicated" {
     cku = 2
   }
   environment {
-    id = confluent_environment.test.id
+    id = data.confluent_environment.test.id
   }
   network {
     id = confluent_network.private-link.id
@@ -109,7 +105,7 @@ resource "confluent_api_key" "cool-manager-kafka-api-key" {
     kind        = confluent_kafka_cluster.dedicated.kind
 
     environment {
-      id = confluent_environment.test.id
+      id = data.confluent_environment.test.id
     }
   }
 
@@ -158,7 +154,7 @@ resource "confluent_api_key" "cool-consumer-kafka-api-key" {
     kind        = confluent_kafka_cluster.dedicated.kind
 
     environment {
-      id = confluent_environment.test.id
+      id = data.confluent_environment.test.id
     }
   }
   
@@ -193,7 +189,7 @@ resource "confluent_api_key" "cool-producer-kafka-api-key" {
     kind        = confluent_kafka_cluster.dedicated.kind
 
     environment {
-      id = confluent_environment.test.id
+      id = data.confluent_environment.test.id
     }
   }
 
@@ -260,7 +256,8 @@ resource "confluent_kafka_acl" "cool-producer-write-on-topic" {
 }
 
 provider "aws" {
-  region = var.region
+  shared_config_files      = ["/home/ec2-user/.aws/config"]
+  shared_credentials_files = ["/home/ec2-user/.aws/credentials"]
 }
 
 data "aws_vpc" "privatelink" {

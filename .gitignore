@@ -1,2 +1,3 @@
-jenkins.txt
-terraform.txt
+*.txt
+terraform.tfstate*
+*.terraform.*
