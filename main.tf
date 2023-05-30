@@ -34,6 +34,9 @@ resource "confluent_schema_registry_cluster" "advanced" {
   region {
     id = data.confluent_schema_registry_region.advanced.id
   }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "confluent_network" "private-link" {
