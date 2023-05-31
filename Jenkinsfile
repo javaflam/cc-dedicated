@@ -16,21 +16,29 @@ pipeline {
         stage('Init') {
             steps {
                 sh '''
-                terraform init
+                terraform init -no-color
                 '''
             }
         }
         
+        stage('Plan') {
+            steps {
+                sh '''
+                terraform plan -no-color
+                '''
+            }
+        }
+
         stage('Confirmation') {
             steps {
                 input 'Do you want to apply the changes?'
             }
         }
 
-        stage('Plan') {
+        stage('Apply') {
             steps {
                 sh '''
-                terraform plan -no-color
+                terraform apply -auto-approve -no-color
                 '''
             }
         }
