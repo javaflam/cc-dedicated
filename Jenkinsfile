@@ -30,7 +30,7 @@ pipeline {
         stage('Plan') {
             steps {
                 sh '''
-                terraform plan
+                terraform plan -no-color
                 '''
             }
         }
