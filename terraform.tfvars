@@ -1,5 +1,3 @@
-confluent_cloud_api_key = "JVLMFLJGACO5ALFW"
-confluent_cloud_api_secret = "WqplGisdJiiltPa5Rojc3M+QCKRUf3exdK1oRL7NeV8BEgYkVwYbtcY8xdTBzcgH"
 confluent_cloud_region = "ap-southeast-1"
 confluent_schema_registry_region = "ap-southeast-2"
 aws_account_id = "492737776546"
