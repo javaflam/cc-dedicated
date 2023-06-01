@@ -64,7 +64,7 @@ resource "confluent_private_link_access" "aws" {
 }
 
 resource "confluent_kafka_cluster" "dedicated" {
-  display_name = "Novigrad"
+  display_name = "Midgad"
   availability = "MULTI_ZONE"
   cloud        = confluent_network.private-link.cloud
   region       = confluent_network.private-link.region
